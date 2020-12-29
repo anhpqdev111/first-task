@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import vn.com.anhpq.firsttask.dagger.component.AppComponent
 import vn.com.anhpq.firsttask.dagger.component.DaggerAppComponent
 import vn.com.anhpq.firsttask.ui.login.LoginViewModel
+import vn.com.anhpq.firsttask.ui.main.MainViewModel
 
 abstract class BaseViewModel : ViewModel() {
     private val injector: AppComponent = DaggerAppComponent
@@ -23,6 +24,7 @@ abstract class BaseViewModel : ViewModel() {
     private fun inject() {
         when (this) {
             is LoginViewModel -> injector.inject(this)
+            is MainViewModel -> injector.inject(this)
         }
     }
 
@@ -32,6 +34,10 @@ abstract class BaseViewModel : ViewModel() {
 
     fun hideLoading() {
         isLoading.value = false
+    }
+
+    fun getIsLoadingObs(): MutableLiveData<Boolean> {
+        return isLoading
     }
 
     override fun onCleared() {

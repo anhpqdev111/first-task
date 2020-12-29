@@ -9,6 +9,16 @@
         android:id="@+id/login"
         android:name="vn.com.anhpq.firsttask.ui.login.LoginFragment"
         android:label="Login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_login_to_main"
+            app:destination="@id/main" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/main"
+        android:name="vn.com.anhpq.firsttask.ui.main.MainFragment"
+        android:label="Main"
+        tools:layout="@layout/fragment_main" />
 
 </navigation>

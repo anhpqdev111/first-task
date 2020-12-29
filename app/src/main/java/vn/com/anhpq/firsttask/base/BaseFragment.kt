@@ -8,15 +8,22 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import vn.com.anhpq.firsttask.ui.FirstTaskActivity
 
-abstract class BaseFragment<VB : ViewDataBinding, VM : ViewModel> : Fragment() {
+abstract class BaseFragment<VB : ViewDataBinding, VM : BaseViewModel> : Fragment() {
 
+    companion object {
+        private var onTimeClickItem: Long = System.currentTimeMillis()
+    }
     // region -> Variables
 
-    private lateinit var binding: VB
-    private lateinit var viewModel: VM
+    protected lateinit var binding: VB
+    protected lateinit var viewModel: VM
+    protected lateinit var navController: NavController
 
     // endregion
 
@@ -34,6 +41,12 @@ abstract class BaseFragment<VB : ViewDataBinding, VM : ViewModel> : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // NavController
+        navController = view.findNavController()
+    }
+
     abstract fun getLayoutRes(): Int
     abstract fun clazz(): Class<VM>
 
@@ -43,6 +56,16 @@ abstract class BaseFragment<VB : ViewDataBinding, VM : ViewModel> : Fragment() {
 
     open fun handleObserver() {
         Log.d(this::class.java.simpleName, "handleObserver")
+        viewModel.getIsLoadingObs().observe(viewLifecycleOwner, Observer { isLoading ->
+            if (activity is FirstTaskActivity) {
+                if (isLoading) {
+                    (activity as FirstTaskActivity).showProgress()
+                } else {
+                    (activity as FirstTaskActivity).hideProgress()
+                }
+            }
+
+        })
     }
 
     open fun initView() {
@@ -51,5 +74,14 @@ abstract class BaseFragment<VB : ViewDataBinding, VM : ViewModel> : Fragment() {
 
     open fun initData() {
 
+    }
+
+    protected fun avoidDuplicateClick(): Boolean {
+        val now = System.currentTimeMillis()
+        if (now - onTimeClickItem < 400L) {
+            return true
+        }
+        onTimeClickItem = now
+        return false
     }
 }
