@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FirstTask">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.FirstTaskActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

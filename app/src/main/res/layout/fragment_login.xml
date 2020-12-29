@@ -1,10 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="controller"
+            type="vn.com.anhpq.firsttask.ui.login.LoginFragment" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white">
+
+        <!-- Header -->
+        <View
+            android:id="@+id/header"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:background="@color/teal_700"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="20dp"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/header"
+            app:layout_constraintLeft_toLeftOf="@id/header"
+            app:layout_constraintTop_toTopOf="@id/header">
+
+            <TextView
+                android:id="@+id/nameStore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kiolyn POS"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/nameEmployee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white_70"
+                android:textSize="18sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutPasskey"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="50dp"
+            android:background="#E0E0E0"
+            android:hint="Passkey"
+            android:textColorHint="#7A7979"
+            app:boxStrokeErrorColor="@color/red"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPasskey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@color/black" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tvLogin"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_shape_login"
+            android:gravity="center"
+            android:onClick="@{controller::actionLogin}"
+            android:text="Login"
+            android:textAllCaps="true"
+            android:textColor="#909090"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="@id/layoutPasskey"
+            app:layout_constraintRight_toRightOf="@id/layoutPasskey"
+            app:layout_constraintTop_toBottomOf="@id/layoutPasskey" />
+
+        <TextView
+            android:id="@+id/btnBrowseMain"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_browse_main"
+            android:gravity="center"
+            android:onClick="@{controller::actionBrowseMain}"
+            android:text="browse main"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="@id/layoutPasskey"
+            app:layout_constraintRight_toRightOf="@id/layoutPasskey"
+            app:layout_constraintTop_toBottomOf="@id/tvLogin" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
