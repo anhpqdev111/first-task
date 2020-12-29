@@ -3,6 +3,7 @@ package vn.com.anhpq.firsttask.dagger.component
 import dagger.Component
 import vn.com.anhpq.firsttask.dagger.module.CoroutineScopeModule
 import vn.com.anhpq.firsttask.dagger.module.NetworkModule
+import vn.com.anhpq.firsttask.ui.ExampleViewModel
 import vn.com.anhpq.firsttask.ui.login.LoginViewModel
 import vn.com.anhpq.firsttask.ui.main.MainViewModel
 import javax.inject.Singleton
@@ -12,6 +13,7 @@ import javax.inject.Singleton
 interface AppComponent {
     fun inject(loginViewModel: LoginViewModel)
     fun inject(mainViewModel: MainViewModel)
+    fun inject(exampleViewModel: ExampleViewModel)
 
     @Component.Builder
     interface Builder {

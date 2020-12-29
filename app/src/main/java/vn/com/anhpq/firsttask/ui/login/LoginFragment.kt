@@ -1,17 +1,17 @@
 package vn.com.anhpq.firsttask.ui.login
 
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import vn.com.anhpq.firsttask.R
 import vn.com.anhpq.firsttask.base.BaseFragment
-import vn.com.anhpq.firsttask.data.model.Employee
+import vn.com.anhpq.firsttask.data.Resource
 import vn.com.anhpq.firsttask.data.model.Store
 import vn.com.anhpq.firsttask.databinding.FragmentLoginBinding
 import vn.com.anhpq.firsttask.ui.dialog.DialogInputAddress
-import vn.com.anhpq.goal.utils.DeviceUtils
+import vn.com.anhpq.firsttask.utils.Constant
+import vn.com.anhpq.firsttask.utils.DeviceUtils
 
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
 
@@ -19,6 +19,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
 
     private lateinit var mDialogInputAddress: DialogInputAddress
     private var isConnected: Boolean = false
+    private var store: String = ""
+    private var passKey: String = ""
 
     // endregion
 
@@ -34,25 +36,41 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
 
     override fun handleObserver() {
         super.handleObserver()
-        viewModel.getEmployeeObs().observe(viewLifecycleOwner, Observer {
-            if (it == null) {
-                Toast.makeText(requireContext(), "Wrong is passkey!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Login is successful!", Toast.LENGTH_SHORT).show()
-                Handler(Looper.getMainLooper()).postDelayed({
-                    navController.navigate(R.id.action_login_to_main)
-                }, 1000L)
+        viewModel.getEmployeeObs().observe(this, Observer {
+            when (it) {
+                is Resource.Success -> {
+                    viewModel.clearLiveData()
+                    Toast.makeText(requireContext(), getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+
+                    sharedPrefs.putString(Constant.KeySharedPref.Store, store)
+                    sharedPrefs.putString(Constant.KeySharedPref.PassKey, passKey)
+                    navController.navigate(
+                        R.id.action_login_to_main,
+                        bundleOf(
+                            Constant.KeyBundle.Employee to it.data
+                        )
+                    )
+                }
+                is Resource.Error -> {
+                    Toast.makeText(requireContext(), it.exception, Toast.LENGTH_SHORT).show()
+                }
             }
         })
-        viewModel.getStoreObs().observe(viewLifecycleOwner, Observer {
-            if (it == null) {
-                isConnected = false
-                Toast.makeText(requireContext(), "Get data faild", Toast.LENGTH_SHORT).show()
-            } else {
-                isConnected = true
-                mDialogInputAddress.dismiss()
-                updateDataEmployee(it)
-                updateStatusConnected()
+        viewModel.getStoreObs().observe(this, Observer {
+            when (it) {
+                is Resource.Success -> {
+                    isConnected = true
+                    mDialogInputAddress.dismiss()
+                    updateDataEmployee(it.data)
+                    updateStatusConnected()
+                    if (passKey.isNotEmpty()) {
+                        viewModel.loginWithPasskey(passKey)
+                    }
+                }
+                is Resource.Error -> {
+                    isConnected = false
+                    Toast.makeText(requireContext(), it.exception, Toast.LENGTH_SHORT).show()
+                }
             }
         })
     }
@@ -60,11 +78,21 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
     override fun initView() {
         mDialogInputAddress = DialogInputAddress(requireContext()) {
             if (it.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), "Address is empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.address_empty), Toast.LENGTH_SHORT).show()
             } else {
                 DeviceUtils.hideKeyBoard(requireContext(), view)
+                store = it
                 viewModel.connectServer(it)
             }
+        }
+    }
+
+    override fun initData() {
+        super.initData()
+        store = sharedPrefs.getString(Constant.KeySharedPref.Store) ?: ""
+        passKey = sharedPrefs.getString(Constant.KeySharedPref.PassKey) ?: ""
+        if (store.isNotEmpty()) {
+            viewModel.connectServer(store)
         }
     }
 
@@ -89,22 +117,21 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
     }
 
     fun actionLogin(@Suppress("UNUSED_PARAMETER") view: View) {
-//        if (avoidDuplicateClick()) {
-//            return
-//        }
-//        if (!isConnected) {
-//            Toast.makeText(requireContext(), "Please connect to the store.", Toast.LENGTH_SHORT).show()
-//            return
-//        }
-//        DeviceUtils.hideKeyBoard(requireContext(), binding.etPasskey)
-//        val passKey = binding.etPasskey.text.toString()
-//        if (passKey.isEmpty()) {
-//            Toast.makeText(requireContext(), "Passkey is not empty", Toast.LENGTH_SHORT).show()
-//            binding.etPasskey.requestFocus()
-//        } else {
-//            viewModel.loginWithPasskey(passKey)
-//        }
-        viewModel.loginWithPasskey("a=1Ac1233")
+        if (avoidDuplicateClick()) {
+            return
+        }
+        if (!isConnected) {
+            Toast.makeText(requireContext(), getString(R.string.connect_to_store), Toast.LENGTH_SHORT).show()
+            return
+        }
+        DeviceUtils.hideKeyBoard(requireContext(), binding.etPasskey)
+        passKey = binding.etPasskey.text.toString()
+        if (passKey.isEmpty()) {
+            Toast.makeText(requireContext(), getString(R.string.passkey_empty), Toast.LENGTH_SHORT).show()
+            binding.etPasskey.requestFocus()
+        } else {
+            viewModel.loginWithPasskey(passKey)
+        }
     }
 
     // endregion
@@ -113,7 +140,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
 
     private fun updateDataEmployee(store: Store?) {
         if (store == null) {
-            binding.nameStore.text = "Kiolyn POS"
+            binding.nameStore.text = getString(R.string.kiolyn_pos)
             binding.nameEmployee.text = ""
             binding.nameEmployee.visibility = View.GONE
         } else {
@@ -125,10 +152,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
 
     private fun updateStatusConnected() {
         if (isConnected) {
-            binding.btnBrowseMain.text = "disconnect main"
+            binding.btnBrowseMain.text = getString(R.string.disconnect_main)
             binding.btnBrowseMain.setBackgroundResource(R.drawable.bg_disconnect_main)
         } else {
-            binding.btnBrowseMain.text = "browse main"
+            binding.btnBrowseMain.text = getString(R.string.browse_main)
             binding.btnBrowseMain.setBackgroundResource(R.drawable.bg_browse_main)
         }
     }

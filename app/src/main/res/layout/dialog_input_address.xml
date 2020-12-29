@@ -26,7 +26,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="6dp"
                     android:gravity="center"
-                    android:text="Server's address"
+                    android:text="@string/server_address"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -38,7 +38,9 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/bg_shape_edt"
-                    android:hint="Server's address"
+                    android:hint="@string/server_address"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
                     android:padding="8dp"
                     android:singleLine="true"
                     android:textSize="16sp" />
@@ -51,7 +53,7 @@
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_browse_main"
                     android:padding="12dp"
-                    android:text="Connect"
+                    android:text="@string/connect"
                     android:textColor="@color/white" />
             </LinearLayout>
 

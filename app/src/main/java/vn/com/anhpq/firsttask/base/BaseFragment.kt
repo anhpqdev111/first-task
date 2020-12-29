@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import vn.com.anhpq.firsttask.ui.FirstTaskActivity
+import vn.com.anhpq.firsttask.utils.SharedPrefsUtils
 
 abstract class BaseFragment<VB : ViewDataBinding, VM : BaseViewModel> : Fragment() {
 
@@ -24,7 +25,7 @@ abstract class BaseFragment<VB : ViewDataBinding, VM : BaseViewModel> : Fragment
     protected lateinit var binding: VB
     protected lateinit var viewModel: VM
     protected lateinit var navController: NavController
-
+    protected lateinit var sharedPrefs: SharedPrefsUtils
     // endregion
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -33,7 +34,7 @@ abstract class BaseFragment<VB : ViewDataBinding, VM : BaseViewModel> : Fragment
 
         // ViewModel
         viewModel = ViewModelProvider(this).get(clazz())
-
+        sharedPrefs = SharedPrefsUtils(requireContext())
         settingDataBinding()
         handleObserver()
         initView()

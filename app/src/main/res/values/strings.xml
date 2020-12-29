@@ -1,6 +1,23 @@
 <resources>
     <string name="app_name">First Task</string>
-    <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <string name="title_home">Home</string>
+    <string name="title_ares">Areas</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_logout">Logout</string>
+
+    <string name="address_empty">Address is empty</string>
+    <string name="disconnect_main">disconnect main</string>
+    <string name="browse_main">browse main</string>
+    <string name="kiolyn_pos">Kiolyn POS</string>
+    <string name="passkey_empty">Passkey is not empty</string>
+    <string name="connect_to_store">Please connect to the store.</string>
+    <string name="login_success">Login is successful!</string>
+
+    <string name="server_address">Server\'s address</string>
+    <string name="connect">Connect</string>
+    <string name="passkey">Passkey</string>
+    <string name="login">Login</string>
 </resources>
